@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(ByteBankApp());
@@ -14,6 +16,10 @@ class  ByteBankApp extends StatelessWidget {
 }
 
 class FormularioTransferencia extends StatelessWidget {
+
+  final TextEditingController _controladorCampoNumeroConta = TextEditingController();
+  final TextEditingController _controladorCampoValor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +29,9 @@ class FormularioTransferencia extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: TextField(
+            controller: _controladorCampoNumeroConta,
               style: TextStyle(
                 fontSize: 24.0,
               ),
@@ -32,9 +39,40 @@ class FormularioTransferencia extends StatelessWidget {
                   labelText: 'Número da conta',
                   hintText: '0000'
               ),
+              keyboardType: TextInputType.number,
             ),
           ),
-          TextField(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _controladorCampoValor,
+              style: TextStyle(
+                fontSize: 24.0,
+              ),
+              decoration: InputDecoration(
+                  icon: Icon(Icons.monetization_on),
+                  labelText: 'Valor',
+                  hintText: '0.00'
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          ElevatedButton(
+              child: Text('Confirmar'),
+              onPressed: () {
+                debugPrint('clicou no confirmar');
+                final int? numeroConta = int.tryParse(_controladorCampoNumeroConta.text);
+                final double? valor = double.tryParse(_controladorCampoValor.text);
+
+
+
+                if(numeroConta != null && valor != null){
+                  final transferenciaCriada = Transferencia(valor, numeroConta);
+                  debugPrint('$transferenciaCriada');
+                }
+
+              }
+          ),
           ElevatedButton(
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green),
@@ -43,8 +81,9 @@ class FormularioTransferencia extends StatelessWidget {
                   textStyle: MaterialStateProperty.all(
                       const TextStyle(fontSize: 14, color: Colors.white))),
               onPressed: () {
+                debugPrint('Clicou no botão verde');
               },
-              child: const Text('Enabled Button')),
+              child: const Text('Confirmar')),
 
         ],
       ),
@@ -100,6 +139,11 @@ class Transferencia {
   final int numeroConta;
 
   Transferencia(this.valor, this.numeroConta);
+
+  @override
+  String toString() {
+    return 'Transferencia{valor: $valor, numeroConta: $numeroConta}';
+  }
 }
 
 
